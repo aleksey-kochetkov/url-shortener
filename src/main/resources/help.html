@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Url Shortener Help page</title>
+</head>
+
+<body>
+<h3>Installation</h3>
+Place the jar file <pre style="display: inline">url-shortener-1.0.jar</pre>
+as you wish.
+<h3>Launching</h3>
+<pre style="display: inline">java -jar url-shortener-1.0.jar</pre>
+<h3>Usage</h3>
+Assuming host name "localhost", use the following URL:<br>
+<pre style="display: inline">http://localhost:8080/account</pre> to
+register new account via application/json request<br>
+<pre style="display: inline">http://localhost:8080/register</pre> to
+register new url for the given account via application/json request,
+and providing Authorization header with Basic authentication token<br>
+<pre style="display: inline">http://localhost:8080/statistic</pre> to
+get count of redirects for URLs of the given account via application/json
+request, and providing Authorization header with Basic authentication
+token<br>
+<pre style="display: inline"><b>http://localhost:8080/{shortUrl}</b></pre>
+to use registered shortening (you will be redirected as was set)<br>
+<pre style="display: inline">http://localhost:8080/help</pre> displays
+this page in browser
+</body>
+</html>
