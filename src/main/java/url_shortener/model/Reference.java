@@ -1,4 +1,4 @@
-package e.model;
+package url_shortener.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;

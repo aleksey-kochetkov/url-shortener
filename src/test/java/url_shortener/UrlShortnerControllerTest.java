@@ -1,4 +1,4 @@
-package e;
+package url_shortener;
 
 import org.junit.runner.RunWith;
 import org.junit.Test;
@@ -6,6 +6,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.hibernate.exception.ConstraintViolationException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -14,10 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import static org.hamcrest.core.StringContains.containsString;
-import e.model.Account;
-import e.model.Reference;
-import e.service.UrlShortenerService;
-import e.web.UrlShortenerController;
+import url_shortener.model.Account;
+import url_shortener.model.Reference;
+import url_shortener.service.UrlShortenerService;
+import url_shortener.web.UrlShortenerController;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -53,7 +55,10 @@ public class UrlShortnerControllerTest {
 
     @Test
     public void whenAccountPageThenAccountExists() throws Exception {
-        when(this.service.createAccount(any())).thenReturn(null);
+        ConstraintViolationException cause =
+                                mock(ConstraintViolationException.class);
+        JpaSystemException exception = new JpaSystemException(cause);
+        when(this.service.createAccount(any())).thenThrow(exception);
         MockHttpServletRequestBuilder builder = post("/account")
                            .contentType("application/json;charset=UTF-8")
                            .content("{\"accountId\":\"one\"}");

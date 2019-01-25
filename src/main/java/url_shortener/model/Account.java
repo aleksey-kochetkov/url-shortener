@@ -1,4 +1,4 @@
-package e.model;
+package url_shortener.model;
 
 import javax.validation.constraints.NotNull;
 import javax.persistence.Entity;

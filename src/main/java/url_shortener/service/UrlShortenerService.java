@@ -1,4 +1,4 @@
-package e.service;
+package url_shortener.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.security.Principal;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
-import e.RegisterPageRequest;
-import e.model.Account;
-import e.model.Reference;
-import e.repository.AccountRepository;
-import e.repository.ReferenceRepository;
+
+import url_shortener.RegisterPageRequest;
+import url_shortener.model.Account;
+import url_shortener.model.Reference;
+import url_shortener.repository.AccountRepository;
+import url_shortener.repository.ReferenceRepository;
 
 @Service
 public class UrlShortenerService {
@@ -26,13 +27,9 @@ public class UrlShortenerService {
 
     @Transactional
     public Account createAccount(Account account) {
-        Account result = null;
-        if (!this.accountRepository.existsById(account.getAccountId())) {
-            account.setPassword(this.generator.generate());
-            this.accountRepository.save(account);
-            result = account;
-        }
-        return result;
+        account.setPassword(this.generator.generate());
+        this.accountRepository.persist(account);
+        return account;
     }
 
     @Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package e.web;
+package url_shortener.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.core.NestedRuntimeException;
 import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,16 +18,15 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import e.AccountPageResponse;
-import e.RegisterPageRequest;
-import e.RegisterPageResponse;
-import e.model.Account;
-import e.model.Reference;
-import e.service.UrlShortenerService;
-import org.springframework.web.servlet.ModelAndView;
+import org.hibernate.exception.ConstraintViolationException;
+import url_shortener.AccountPageResponse;
+import url_shortener.RegisterPageRequest;
+import url_shortener.RegisterPageResponse;
+import url_shortener.model.Account;
+import url_shortener.model.Reference;
+import url_shortener.service.UrlShortenerService;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.servlet.view.InternalResourceView;
 
 @Controller
 public class UrlShortenerController {
@@ -41,16 +41,19 @@ public class UrlShortenerController {
     public ResponseEntity<AccountPageResponse> accountPage(@Valid @RequestBody Account request) {
         ResponseEntity<AccountPageResponse> result;
         AccountPageResponse response = new AccountPageResponse();
-        if (this.service.createAccount(request) == null) {
-            response.setSuccess(false);
-            response.setDescription("Account with that ID already exists");
-            result = new ResponseEntity<>(
-                                                response, HttpStatus.OK);
-        } else {
+        try {
+            this.service.createAccount(request);
             response.setSuccess(true);
             response.setDescription("Your account is opened");
             response.setPassword(request.getPassword());
             result = new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch(NestedRuntimeException exception) {
+            if (!exception.contains(ConstraintViolationException.class)) {
+                throw exception;
+            }
+            response.setSuccess(false);
+            response.setDescription("Account with that ID already exists");
+            result = new ResponseEntity<>(response, HttpStatus.OK);
         }
         return result;
     }
